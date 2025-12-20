@@ -22,14 +22,16 @@ use gpui_component::{
     resizable::{h_resizable, resizable_panel},
     tree::{TreeItem, TreeState, tree},
     v_flex,
+    text::TextView,
+    clipboard::Clipboard,
 };
 use gpui_component_assets::Assets;
-use typodown_core::Open;
 use lsp_types::{
     CodeAction, CodeActionKind, CompletionContext, CompletionItem, CompletionResponse,
     CompletionTextEdit, InlineCompletionContext, InlineCompletionItem, InlineCompletionResponse,
     InsertReplaceEdit, InsertTextFormat, TextEdit, WorkspaceEdit,
 };
+use typodown_core::Open;
 
 fn init() {
     LanguageRegistry::singleton().register(
@@ -1039,14 +1041,68 @@ impl Render for Example {
                                     .child(self.render_file_tree(window, cx)),
                             )
                             .child(
-                                Input::new(&self.editor)
-                                    .bordered(false)
-                                    .p_0()
-                                    .h_full()
-                                    .font_family(cx.theme().mono_font_family.clone())
-                                    .text_size(cx.theme().mono_font_size)
-                                    .focus_bordered(false)
-                                    .into_any_element(),
+                                h_resizable("container")
+                                    .child(
+                                        resizable_panel().child(
+                                            div()
+                                                .id("source")
+                                                .size_full()
+                                                .font_family(cx.theme().mono_font_family.clone())
+                                                .text_size(cx.theme().mono_font_size)
+                                                .child(
+                                                    Input::new(&self.editor)
+                                                        .h_full()
+                                                        .p_0()
+                                                        .border_0()
+                                                        .focus_bordered(false),
+                                                ),
+                                        ),
+                                    )
+                                    .child(
+                                        resizable_panel().child(
+                                            TextView::markdown(
+                                                "preview",
+                                                self.editor.read(cx).value().clone(),
+                                                window,
+                                                cx,
+                                            )
+                                            .code_block_actions(|code_block, _window, _cx| {
+                                                let code = code_block.code();
+                                                let lang = code_block.lang();
+
+                                                h_flex()
+                                                    .gap_1()
+                                                    .child(
+                                                        Clipboard::new("copy").value(code.clone()),
+                                                    )
+                                                    .when_some(lang, |this, lang| {
+                                                        // Only show run terminal button for certain languages
+                                                        if lang.as_ref() == "rust"
+                                                            || lang.as_ref() == "python"
+                                                        {
+                                                            this.child(
+                                                                Button::new("run-terminal")
+                                                                    .icon(IconName::SquareTerminal)
+                                                                    .ghost()
+                                                                    .xsmall()
+                                                                    .on_click(move |_, _, _cx| {
+                                                                        println!(
+                                                                            "Running {} code: {}",
+                                                                            lang, code
+                                                                        );
+                                                                    }),
+                                                            )
+                                                        } else {
+                                                            this
+                                                        }
+                                                    })
+                                            })
+                                            .flex_none()
+                                            .p_5()
+                                            .scrollable(true)
+                                            .selectable(true),
+                                        ),
+                                    ),
                             ),
                     )
                     .child(
