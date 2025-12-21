@@ -10,8 +10,9 @@ use std::{
 use autocorrect::ignorer::Ignorer;
 use gpui::{prelude::FluentBuilder, *};
 use gpui_component::{
-    ActiveTheme, IconName, Sizable, WindowExt,
+    ActiveTheme, IconName, Selectable, Sizable, WindowExt,
     button::{Button, ButtonVariants as _},
+    clipboard::Clipboard,
     h_flex,
     highlighter::{Diagnostic, DiagnosticSeverity, Language, LanguageConfig, LanguageRegistry},
     input::{
@@ -20,10 +21,9 @@ use gpui_component::{
     },
     list::ListItem,
     resizable::{h_resizable, resizable_panel},
+    text::TextView,
     tree::{TreeItem, TreeState, tree},
     v_flex,
-    text::TextView,
-    clipboard::Clipboard,
 };
 use gpui_component_assets::Assets;
 use lsp_types::{
@@ -31,7 +31,14 @@ use lsp_types::{
     CompletionTextEdit, InlineCompletionContext, InlineCompletionItem, InlineCompletionResponse,
     InsertReplaceEdit, InsertTextFormat, TextEdit, WorkspaceEdit,
 };
-use typodown_core::Open;
+use typodown_core::{Open, WysiwygEditor};
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ViewMode {
+    Source,
+    Split,
+    Wysiwyg,
+}
 
 fn init() {
     LanguageRegistry::singleton().register(
@@ -52,6 +59,7 @@ pub struct Example {
     tree_state: Entity<TreeState>,
     go_to_line_state: Entity<InputState>,
     language: Language,
+    view_mode: ViewMode,
     line_number: bool,
     indent_guides: bool,
     soft_wrap: bool,
@@ -711,6 +719,7 @@ impl Example {
             tree_state,
             go_to_line_state,
             language: default_language,
+            view_mode: ViewMode::Split,
             line_number: true,
             indent_guides: true,
             soft_wrap: false,
@@ -1040,8 +1049,21 @@ impl Render for Example {
                                     .size(px(240.))
                                     .child(self.render_file_tree(window, cx)),
                             )
-                            .child(
-                                h_resizable("container")
+                            .child(match self.view_mode {
+                                ViewMode::Source => div()
+                                    .id("source-only")
+                                    .size_full()
+                                    .font_family(cx.theme().mono_font_family.clone())
+                                    .text_size(cx.theme().mono_font_size)
+                                    .child(
+                                        Input::new(&self.editor)
+                                            .h_full()
+                                            .p_0()
+                                            .border_0()
+                                            .focus_bordered(false),
+                                    )
+                                    .into_any_element(),
+                                ViewMode::Split => h_resizable("container")
                                     .child(
                                         resizable_panel().child(
                                             div()
@@ -1076,7 +1098,6 @@ impl Render for Example {
                                                         Clipboard::new("copy").value(code.clone()),
                                                     )
                                                     .when_some(lang, |this, lang| {
-                                                        // Only show run terminal button for certain languages
                                                         if lang.as_ref() == "rust"
                                                             || lang.as_ref() == "python"
                                                         {
@@ -1102,8 +1123,14 @@ impl Render for Example {
                                             .scrollable(true)
                                             .selectable(true),
                                         ),
-                                    ),
-                            ),
+                                    )
+                                    .into_any_element(),
+                                ViewMode::Wysiwyg => div()
+                                    .id("wysiwyg-container")
+                                    .size_full()
+                                    .child(WysiwygEditor::new(self.editor.clone()))
+                                    .into_any_element(),
+                            }),
                     )
                     .child(
                         h_flex()
@@ -1122,7 +1149,44 @@ impl Render for Example {
                                     .child(self.render_soft_wrap_button(window, cx))
                                     .child(self.render_indent_guides_button(window, cx)),
                             )
-                            .child(self.render_go_to_line_button(window, cx)),
+                            .child(self.render_go_to_line_button(window, cx))
+                            .child(
+                                h_flex()
+                                    .gap_1()
+                                    .child(
+                                        Button::new("mode-source")
+                                            .ghost()
+                                            .xsmall()
+                                            .label("Source")
+                                            .selected(self.view_mode == ViewMode::Source)
+                                            .on_click(cx.listener(|this, _, _, cx| {
+                                                this.view_mode = ViewMode::Source;
+                                                cx.notify();
+                                            })),
+                                    )
+                                    .child(
+                                        Button::new("mode-split")
+                                            .ghost()
+                                            .xsmall()
+                                            .label("Split")
+                                            .selected(self.view_mode == ViewMode::Split)
+                                            .on_click(cx.listener(|this, _, _, cx| {
+                                                this.view_mode = ViewMode::Split;
+                                                cx.notify();
+                                            })),
+                                    )
+                                    .child(
+                                        Button::new("mode-wysiwyg")
+                                            .ghost()
+                                            .xsmall()
+                                            .label("WYSIWYG")
+                                            .selected(self.view_mode == ViewMode::Wysiwyg)
+                                            .on_click(cx.listener(|this, _, _, cx| {
+                                                this.view_mode = ViewMode::Wysiwyg;
+                                                cx.notify();
+                                            })),
+                                    ),
+                            ),
                     ),
             )
     }

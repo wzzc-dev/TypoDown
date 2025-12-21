@@ -52,6 +52,7 @@ mod tree_story;
 mod virtual_list_story;
 mod webview_story;
 mod welcome_story;
+mod wysiwyg_editor;
 
 use gpui::{
     Action, AnyElement, AnyView, App, AppContext, Bounds, Context, Div, Entity, EventEmitter,
@@ -113,6 +114,7 @@ pub use tree_story::TreeStory;
 pub use virtual_list_story::VirtualListStory;
 pub use webview_story::WebViewStory;
 pub use welcome_story::WelcomeStory;
+pub use wysiwyg_editor::WysiwygEditor;
 
 use gpui_component::{
     ActiveTheme, IconName, Root, TitleBar, WindowExt,
