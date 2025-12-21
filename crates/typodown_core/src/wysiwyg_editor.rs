@@ -32,8 +32,11 @@ impl WysiwygEditor {
         this._subscriptions.push(cx.subscribe_in(
             &main_editor,
             window,
-            |_this, _, _event: &InputEvent, _window, _cx| {
-                // Refresh active line status if needed.
+            |this, _, event: &InputEvent, window, cx| {
+                if matches!(event, InputEvent::Change) {
+                    this.update_active_line(window, cx);
+                    cx.notify();
+                }
             },
         ));
 
@@ -64,6 +67,7 @@ impl WysiwygEditor {
             self.active_line = Some(cursor_line);
             self.line_editor.update(cx, |state, cx| {
                 state.set_value(line_text, window, cx);
+                state.focus(window, cx);
             });
         }
     }
@@ -75,6 +79,18 @@ impl WysiwygEditor {
         } else {
             return;
         };
+
+        let old_text = self
+            .main_editor
+            .read(cx)
+            .value()
+            .lines()
+            .nth(active_line as usize)
+            .unwrap_or_default()
+            .to_string();
+        if old_text == line_text {
+            return;
+        }
 
         self.main_editor.update(cx, |main_state, cx| {
             let text = main_state.value();
@@ -106,6 +122,10 @@ impl Render for WysiwygEditor {
 
         // Ensure we are synced if cursor moved
         if self.active_line != Some(cursor_line) {
+            println!(
+                "WysiwygEditor: cursor line changed from {:?} to {}",
+                self.active_line, cursor_line
+            );
             self.update_active_line(window, cx);
         }
 
@@ -144,7 +164,8 @@ impl Render for WysiwygEditor {
                         )
                         .into_any_element()
                     })
-                    .on_click(cx.listener(move |this, _, window, cx| {
+                    .on_click(cx.listener(move |this, _event: &ClickEvent, window, cx| {
+                        println!("WysiwygEditor: line {} clicked", i);
                         this.main_editor.update(cx, |state, cx| {
                             state.set_cursor_position(Position::new(i as u32, 0), window, cx);
                         });
