@@ -27,19 +27,6 @@ impl WysiwygEditor {
             _subscriptions: vec![],
         };
 
-        this.update_active_line(window, cx);
-
-        this._subscriptions.push(cx.subscribe_in(
-            &main_editor,
-            window,
-            |this, _, event: &InputEvent, window, cx| {
-                if matches!(event, InputEvent::Change) {
-                    this.update_active_line(window, cx);
-                    cx.notify();
-                }
-            },
-        ));
-
         this._subscriptions.push(cx.subscribe_in(
             &this.line_editor,
             window,
