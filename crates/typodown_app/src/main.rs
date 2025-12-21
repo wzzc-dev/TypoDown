@@ -1,4 +1,5 @@
 use std::{
+    fs,
     ops::Range,
     path::PathBuf,
     rc::Rc,
@@ -8,6 +9,7 @@ use std::{
 };
 
 use autocorrect::ignorer::Ignorer;
+use directories::UserDirs;
 use gpui::{prelude::FluentBuilder, *};
 use gpui_component::{
     ActiveTheme, IconName, Selectable, Sizable, WindowExt,
@@ -680,7 +682,7 @@ fn build_file_items(ignorer: &Ignorer, root: &PathBuf, path: &PathBuf) -> Vec<Tr
 
 impl Example {
     pub fn new(window: &mut Window, cx: &mut Context<Self>) -> Self {
-        let default_language = Language::from_str("rust");
+        let default_language = Language::from_str("markdown");
         let lsp_store = ExampleLspStore::new();
 
         let editor = cx.new(|cx| {
@@ -708,7 +710,28 @@ impl Example {
         let go_to_line_state = cx.new(|cx| InputState::new(window, cx));
 
         let tree_state = cx.new(|cx| TreeState::new(cx));
-        Self::load_files(tree_state.clone(), PathBuf::from("./"), cx);
+
+        // Resolve Documents/TypoDown path
+        let mut default_path = PathBuf::from("./");
+        if let Some(user_dirs) = UserDirs::new() {
+            if let Some(documents_dir) = user_dirs.document_dir() {
+                let typodown_dir = documents_dir.join("TypoDown");
+                if !typodown_dir.exists() {
+                    let _ = fs::create_dir_all(&typodown_dir);
+                }
+                default_path = typodown_dir;
+            }
+        }
+
+        let untitled_path = default_path.join("Untitled.md");
+        if !untitled_path.exists() {
+            let _ = fs::write(&untitled_path, "# Untitled\n\nStart writing here...");
+        }
+
+        Self::load_files(tree_state.clone(), default_path.clone(), cx);
+
+        let view = cx.entity();
+        let _ = Self::open_file(view, untitled_path, window, cx);
 
         let _subscriptions = vec![cx.subscribe(&editor, |this, _, _: &InputEvent, cx| {
             this.lint_document(cx);

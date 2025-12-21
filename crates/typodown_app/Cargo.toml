@@ -18,6 +18,7 @@ gpui-component-assets.workspace = true
 reqwest_client = { path = "../reqwest_client" }
 typodown_core = { path = "../typodown_core" }
 autocorrect = "2.14.2"
+directories.workspace = true
 chrono = "0.4"
 color-lsp = "0.2.0"
 fake = { version = "2.10.0", features = ["dummy"] }
