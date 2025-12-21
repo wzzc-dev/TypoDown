@@ -58,6 +58,7 @@ fn init() {
 
 pub struct Example {
     editor: Entity<InputState>,
+    wysiwyg_editor: Entity<WysiwygEditor>,
     tree_state: Entity<TreeState>,
     go_to_line_state: Entity<InputState>,
     language: Language,
@@ -737,8 +738,11 @@ impl Example {
             this.lint_document(cx);
         })];
 
+        let wysiwyg_editor = cx.new(|cx| WysiwygEditor::new(editor.clone(), window, cx));
+
         Self {
             editor,
+            wysiwyg_editor,
             tree_state,
             go_to_line_state,
             language: default_language,
@@ -1151,7 +1155,7 @@ impl Render for Example {
                                 ViewMode::Wysiwyg => div()
                                     .id("wysiwyg-container")
                                     .size_full()
-                                    .child(WysiwygEditor::new(self.editor.clone()))
+                                    .child(self.wysiwyg_editor.clone())
                                     .into_any_element(),
                             }),
                     )
