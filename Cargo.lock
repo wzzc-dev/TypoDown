@@ -7892,9 +7892,25 @@ name = "typodown_core"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "directories",
+ "gpui",
+ "gpui-component",
+ "reqwest_client",
+ "serde",
+ "serde_json",
+ "tracing",
+ "tracing-subscriber",
+]
+
+[[package]]
+name = "typodown_gallery"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
  "autocorrect",
  "chrono",
  "color-lsp",
+ "directories",
  "fake",
  "gpui",
  "gpui-component",

@@ -1,5 +1,5 @@
 use gpui::{
-    App, AppContext, Context, Entity, FocusHandle, Focusable, Render, Styled as _, Window, px,
+    px, App, AppContext, Context, Entity, FocusHandle, Focusable, Render, Styled as _, Window,
 };
 
 use gpui_component::{dock::PanelControl, text::TextView};
@@ -28,7 +28,7 @@ impl Story for WelcomeStory {
     }
 
     fn description() -> &'static str {
-        "UI components for building fantastic desktop application by using GPUI."
+        "Development gallery for TypoDown's shared UI components and interaction patterns."
     }
 
     fn new_view(window: &mut Window, cx: &mut App) -> Entity<impl Render> {

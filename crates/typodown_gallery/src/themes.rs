@@ -23,7 +23,6 @@ impl State {
 pub fn init(cx: &mut App) {
     tracing::info!("Load themes...");
     let state = load_state().unwrap_or_else(State::with_defaults);
-
     if let Err(err) = ThemeRegistry::watch_dir(PathBuf::from("./themes"), cx, move |cx| {
         if let Some(theme) = ThemeRegistry::global(cx)
             .themes()
@@ -67,14 +66,14 @@ pub fn init(cx: &mut App) {
 
 #[derive(Action, Clone, PartialEq)]
 #[action(namespace = themes, no_json)]
-pub struct SwitchTheme(pub SharedString);
+pub(crate) struct SwitchTheme(pub(crate) SharedString);
 
 #[derive(Action, Clone, PartialEq)]
 #[action(namespace = themes, no_json)]
-pub struct SwitchThemeMode(pub ThemeMode);
+pub(crate) struct SwitchThemeMode(pub(crate) ThemeMode);
 
 fn state_file_path() -> Option<PathBuf> {
-    ProjectDirs::from("", "", "TypoDown").map(|dirs| dirs.config_dir().join("theme-state.json"))
+    ProjectDirs::from("", "", "TypoDown").map(|dirs| dirs.config_dir().join("gallery-theme-state.json"))
 }
 
 fn load_state() -> Option<State> {
@@ -103,42 +102,4 @@ fn write_state_to_path(path: &Path, state: &State) -> std::io::Result<()> {
     let json = serde_json::to_string_pretty(state)
         .map_err(|error| std::io::Error::other(error.to_string()))?;
     std::fs::write(path, json)
-}
-
-#[cfg(test)]
-mod tests {
-    use std::path::PathBuf;
-
-    use super::{State, read_state_from_path, write_state_to_path};
-
-    fn temp_state_path(test_name: &str) -> PathBuf {
-        let mut path = std::env::temp_dir();
-        path.push(format!(
-            "typodown-core-theme-{}-{}",
-            test_name,
-            std::process::id()
-        ));
-        path.push("theme-state.json");
-        path
-    }
-
-    #[test]
-    fn writes_and_reads_state_from_config_path() {
-        let path = temp_state_path("roundtrip");
-        let state = State {
-            theme: "Ayu Light".into(),
-            scrollbar_show: None,
-        };
-
-        write_state_to_path(&path, &state).unwrap();
-        let loaded = read_state_from_path(&path).unwrap();
-
-        assert_eq!(loaded.theme, state.theme);
-        assert_eq!(loaded.scrollbar_show, state.scrollbar_show);
-
-        let _ = std::fs::remove_file(&path);
-        if let Some(parent) = path.parent() {
-            let _ = std::fs::remove_dir_all(parent);
-        }
-    }
 }

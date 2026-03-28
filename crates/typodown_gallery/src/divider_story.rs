@@ -5,7 +5,7 @@ use gpui::{
 };
 use gpui_component::{ActiveTheme, divider::Divider, h_flex, label::Label, v_flex};
 
-const DESCRIPTION: &str = "GPUI Component is a Rust GUI components for building fantastic cross-platform desktop application by using GPUI.";
+const DESCRIPTION: &str = "TypoDown Gallery is a development workspace for shared cross-platform desktop UI patterns built with GPUI.";
 
 pub struct DividerStory {
     focus_handle: gpui::FocusHandle,
@@ -71,7 +71,7 @@ impl Render for DividerStory {
                     v_flex()
                         .gap_y_4()
                         .child(
-                            v_flex().gap_y_2().child("Hello GPUI Component").child(
+                            v_flex().gap_y_2().child("Hello TypoDown").child(
                                 Label::new(DESCRIPTION)
                                     .text_color(cx.theme().muted_foreground)
                                     .text_sm(),

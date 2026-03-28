@@ -4,6 +4,7 @@ default-members = [
 ]
 members = [
     "crates/typodown_app",
+    "crates/typodown_gallery",
 ]
 resolver = "2"
 

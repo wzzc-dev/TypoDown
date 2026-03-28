@@ -53,13 +53,13 @@ impl TextareaStory {
                 .searchable(true)
                 .default_value(
                     unindent::unindent(
-                        r#"Hello 世界，this is GPUI component.
+                        r#"Hello 世界，this is TypoDown.
 
-                    The GPUI Component is a collection of UI components for GPUI framework, including.
+                    The TypoDown is a collection of UI components for the editor shell, including.
 
                     Button, Input, Checkbox, Radio, Dropdown, Tab, and more...
 
-                    Here is an application that is built by using GPUI Component.
+                    Here is an application that is built by using TypoDown.
 
                     > This application is still under development, not published yet.
 
@@ -105,7 +105,7 @@ impl TextareaStory {
                 .auto_grow(1, 5)
                 .soft_wrap(false)
                 .placeholder("Enter text here...")
-                .default_value("Hello 世界，this is GPUI component.")
+                .default_value("Hello 世界，this is TypoDown.")
         });
 
         Self {

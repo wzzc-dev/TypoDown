@@ -1,19 +1,19 @@
 use std::rc::Rc;
 
 use gpui::{
-    AnyElement, App, AppContext, Context, Corner, Entity, FocusHandle, InteractiveElement as _,
-    IntoElement, MouseButton, ParentElement as _, Render, SharedString, Styled as _, Subscription,
-    Window, div, px,
+    div, px, AnyElement, App, AppContext, Context, Corner, Entity, FocusHandle,
+    InteractiveElement as _, IntoElement, MouseButton, ParentElement as _, Render, SharedString,
+    Styled as _, Subscription, Window,
 };
 use gpui_component::{
-    ActiveTheme as _, IconName, PixelsExt, Side, Sizable as _, Theme, TitleBar, WindowExt as _,
     badge::Badge,
     button::{Button, ButtonVariants as _},
     menu::{AppMenuBar, DropdownMenu as _},
     scroll::ScrollbarShow,
+    ActiveTheme as _, IconName, PixelsExt, Side, Sizable as _, Theme, TitleBar, WindowExt as _,
 };
 
-use crate::{SelectFont, SelectRadius, SelectScrollbarShow};
+use crate::{app_menus, SelectFont, SelectRadius, SelectScrollbarShow};
 
 pub struct AppTitleBar {
     app_menu_bar: Entity<AppMenuBar>,
@@ -24,10 +24,12 @@ pub struct AppTitleBar {
 
 impl AppTitleBar {
     pub fn new(
-        _title: impl Into<SharedString>,
+        title: impl Into<SharedString>,
         window: &mut Window,
         cx: &mut Context<Self>,
     ) -> Self {
+        app_menus::init(title, cx);
+
         let font_size_selector = cx.new(|cx| FontSizeSelector::new(window, cx));
         let app_menu_bar = AppMenuBar::new(window, cx);
 
@@ -54,7 +56,6 @@ impl Render for AppTitleBar {
         let notifications_count = window.notifications(cx).len();
 
         TitleBar::new()
-            // left side
             .child(div().flex().items_center().child(self.app_menu_bar.clone()))
             .child(
                 div()
@@ -66,6 +67,15 @@ impl Render for AppTitleBar {
                     .on_mouse_down(MouseButton::Left, |_, _, cx| cx.stop_propagation())
                     .child((self.child.clone())(window, cx))
                     .child(self.font_size_selector.clone())
+                    .child(
+                        Button::new("github")
+                            .icon(IconName::GitHub)
+                            .small()
+                            .ghost()
+                            .on_click(|_, _, cx| {
+                                cx.open_url("https://github.com/wzzc-dev/TypoDown")
+                            }),
+                    )
                     .child(
                         div().relative().child(
                             Badge::new().count(notifications_count).max(99).child(

@@ -1,6 +1,6 @@
 # Hello, **World**!
 
-Build Status [![Build Status](https://github.com/longbridge/gpui-component/actions/workflows/ci.yml/badge.svg)](https://github.com/longbridge/gpui-component/actions/workflows/ci.yml) of [GPUI Component](https://github.com/longbridge/gpui-component).
+Build Status [![Build Status](https://github.com/wzzc-dev/TypoDown/actions/workflows/ci.yml/badge.svg)](https://github.com/wzzc-dev/TypoDown/actions/workflows/ci.yml) of [TypoDown](https://github.com/wzzc-dev/TypoDown).
 
 This is first paragraph, there have **BOLD**, _italic_, and ~strikethrough~, `code` text [^1] [^2].
 
@@ -66,7 +66,7 @@ struct Repository {
 
 fn main() {
     let _ = Repository {
-        name: "GPUI Component".to_string(),
+        name: "TypoDown".to_string(),
     };
 
     println!("Hello, World!");

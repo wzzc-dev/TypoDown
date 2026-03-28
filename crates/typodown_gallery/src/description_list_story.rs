@@ -30,24 +30,24 @@ pub struct DescriptionListStory {
 impl DescriptionListStory {
     fn new(_: &mut Window, cx: &mut Context<Self>) -> Self {
         let items = vec![
-            ("Name", "GPUI Component", 1),
+            ("Name", "TypoDown Gallery", 1),
             (
                 "Description",
-                "UI components for building fantastic desktop application by using [GPUI](https://gpui.rs).\
+                "Development gallery for shared TypoDown UI components built with [GPUI](https://gpui.rs).\
                 \n\n \
                 Contains a lot of useful UI components, such as **Button**, **Input**, **Table**, **List**, **Select**, **DatePicker** ... \
                 \n\n \
-                You can easily create your native desktop application by using GPUI Component.
+                Use this gallery to iterate on the shared UI patterns behind TypoDown.
                 ",
                 3,
             ),
             ("Version", "0.1.0", 1),
             ("License", "Apache-2.0", 1),
-            ("Author", "Longbridge", 1),
+            ("Author", "wzzc-dev", 1),
             ("--", "--", 1),
             (
                 "Repository",
-                "https://github.com/longbridge/gpui-component",
+                "https://github.com/wzzc-dev/TypoDown",
                 2,
             ),
             (

@@ -7,7 +7,7 @@ use gpui_component::{
     v_flex,
 };
 use gpui_component_assets::Assets;
-use typodown_core::*;
+use typodown_gallery::*;
 
 pub struct Gallery {
     stories: Vec<(&'static str, Vec<Entity<StoryContainer>>)>,
@@ -203,7 +203,7 @@ impl Render for Gallery {
                                                         .line_height(relative(1.25))
                                                         .overflow_hidden()
                                                         .text_ellipsis()
-                                                        .child("GPUI Component")
+                                                        .child("TypoDown")
                                                         .child(
                                                             div()
                                                                 .text_color(
@@ -302,11 +302,11 @@ fn main() {
     let name = std::env::args().nth(1);
 
     app.run(move |cx| {
-        typodown_core::init(cx);
+        typodown_gallery::init(cx);
         cx.activate(true);
 
-        typodown_core::create_new_window(
-            "GPUI Component",
+        typodown_gallery::create_new_window(
+            "TypoDown Gallery",
             move |window, cx| Gallery::view(name.as_deref(), window, cx),
             cx,
         );

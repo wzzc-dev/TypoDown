@@ -306,7 +306,7 @@ impl SettingsStory {
                                         .with_size(options.size)
                                         .on_click(|_, _, cx| {
                                             cx.open_url(
-                                                "https://github.com/longbridge/gpui-component",
+                                                "https://github.com/wzzc-dev/TypoDown",
                                             );
                                         }),
                                 )
@@ -367,7 +367,7 @@ impl SettingsStory {
                             .items_center()
                             .justify_center()
                             .child(Icon::new(IconName::GalleryVerticalEnd).size_16())
-                            .child("GPUI Component")
+                            .child("TypoDown Gallery")
                             .child(
                                 Label::new(
                                     "Rust GUI components for building fantastic cross-platform \
@@ -384,7 +384,7 @@ impl SettingsStory {
                             "GitHub Repository",
                             SettingField::element(OpenURLSettingField::new(
                                 "Repository...",
-                                "https://github.com/longbridge/gpui-component",
+                                "https://github.com/wzzc-dev/TypoDown",
                             )),
                         )
                         .description("Open the GitHub repository in your default browser."),
@@ -392,12 +392,12 @@ impl SettingsStory {
                             "Documentation",
                             SettingField::element(OpenURLSettingField::new(
                                 "Rust Docs...",
-                                "https://docs.rs/gpui-component"
+                                "https://github.com/wzzc-dev/TypoDown"
                             )),
                         )
                         .description(TextView::markdown(
                             "desc",
-                            "Rust doc for the `gpui-component` crate.",
+                            "Project source and documentation for TypoDown.",
                             window,
                             cx,
                         )),
@@ -409,11 +409,11 @@ impl SettingsStory {
                                     .label("Website...")
                                     .with_size(options.size)
                                     .on_click(|_, _window, cx| {
-                                        cx.open_url("https://longbridge.github.io/gpui-component/");
+                                        cx.open_url("https://github.com/wzzc-dev/TypoDown");
                                     })
                             }),
                         )
-                        .description("Official website and documentation for the GPUI Component."),
+                        .description("Open the TypoDown project page and documentation entry point."),
                     ])),
         ]
     }

@@ -13,6 +13,18 @@ pub fn init(title: impl Into<SharedString>, cx: &mut App) {
             items: vec![
                 MenuItem::action("About", About),
                 MenuItem::Separator,
+                MenuItem::action("Open...", Open),
+                MenuItem::Separator,
+                MenuItem::Submenu(Menu {
+                    name: "Appearance".into(),
+                    items: vec![
+                        MenuItem::action("Light", SwitchThemeMode(ThemeMode::Light)),
+                        MenuItem::action("Dark", SwitchThemeMode(ThemeMode::Dark)),
+                    ],
+                }),
+                theme_menu(cx),
+                language_menu(cx),
+                MenuItem::Separator,
                 MenuItem::action("Quit", Quit),
             ],
         },
@@ -42,32 +54,16 @@ pub fn init(title: impl Into<SharedString>, cx: &mut App) {
             ],
         },
         Menu {
-            name: "View".into(),
+            name: "Window".into(),
             items: vec![
-                MenuItem::Submenu(Menu {
-                    name: "Appearance".into(),
-                    items: vec![
-                        MenuItem::action("Light", SwitchThemeMode(ThemeMode::Light)),
-                        MenuItem::action("Dark", SwitchThemeMode(ThemeMode::Dark)),
-                    ],
-                }),
-                theme_menu(cx),
-                language_menu(cx),
+                MenuItem::action("Close Window", CloseWindow),
                 MenuItem::separator(),
                 MenuItem::action("Toggle Search", ToggleSearch),
             ],
         },
         Menu {
-            name: "Window".into(),
-            items: vec![
-                MenuItem::action("Open...", Open),
-                MenuItem::separator(),
-                MenuItem::action("Close Window", CloseWindow),
-            ],
-        },
-        Menu {
             name: "Help".into(),
-            items: vec![MenuItem::action("About TypoDown", About)],
+            items: vec![MenuItem::action("Open Website", Open)],
         },
     ]);
 }

@@ -55,16 +55,9 @@ jobs:
         if: ${{ matrix.run_on == 'macos-latest' }}
         run: |
           cargo clippy -- --deny warnings
-      - name: Test Linux
-        if: ${{ matrix.run_on == 'ubuntu-latest' }}
+      - name: Check Workspace
         run: |
-          cargo test --all
-      - name: Test Windows
-        if: ${{ matrix.run_on == 'windows-latest' }}
+          cargo check --workspace
+      - name: Test Workspace
         run: |
-          cargo test --all
-      - name: Test MacOS
-        if: ${{ matrix.run_on == 'macos-latest' }}
-        run: |
-          cargo test --all
-          cargo test -p gpui-component --doc
+          cargo test --workspace

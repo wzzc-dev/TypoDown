@@ -1,15 +1,11 @@
-use gpui::{
-    App, AppContext as _, ClickEvent, Context, Entity, InteractiveElement, IntoElement,
-    ParentElement as _, Render, Styled, Subscription, Window, div,
-};
-
 use crate::section;
+use gpui::{
+    div, App, AppContext as _, ClickEvent, Context, Entity, InteractiveElement, IntoElement,
+    ParentElement as _, Render, Styled, Subscription, Window,
+};
 use gpui_component::{button::*, input::*, *};
-
 const CODE_EXAMPLE: &str = r#"{"single_line":"code editor"}"#;
-
 pub fn init(_: &mut App) {}
-
 pub struct InputStory {
     input1: Entity<InputState>,
     input2: Entity<InputState>,
@@ -26,49 +22,40 @@ pub struct InputStory {
     currency_input: Entity<InputState>,
     custom_input: Entity<InputState>,
     code_input: Entity<InputState>,
-
     _subscriptions: Vec<Subscription>,
 }
-
 impl super::Story for InputStory {
     fn title() -> &'static str {
         "Input"
     }
-
     fn closable() -> bool {
         false
     }
-
     fn new_view(window: &mut Window, cx: &mut App) -> Entity<impl Render> {
         Self::view(window, cx)
     }
 }
-
 impl InputStory {
     pub fn view(window: &mut Window, cx: &mut App) -> Entity<Self> {
         cx.new(|cx| Self::new(window, cx))
     }
-
     fn new(window: &mut Window, cx: &mut Context<Self>) -> Self {
         let input1 = cx.new(|cx| {
             InputState::new(window, cx)
-                .default_value("Hello 世界，this is GPUI component, this is a long text.")
+                .default_value("Hello 世界，this is TypoDown, this is a long text.")
         });
-
         let input2 = cx.new(|cx| InputState::new(window, cx).placeholder("Enter text here..."));
         let input_esc = cx.new(|cx| {
             InputState::new(window, cx)
                 .placeholder("Enter text and clear it by pressing ESC")
                 .clean_on_escape()
         });
-
         let mask_input = cx.new(|cx| {
             InputState::new(window, cx)
                 .masked(true)
                 .placeholder("Enter your password...")
                 .default_value("this-is-password-中文🚀🎉")
         });
-
         let prefix_input1 =
             cx.new(|cx| InputState::new(window, cx).placeholder("Search some thing..."));
         let suffix_input1 = cx.new(|cx| {
@@ -79,7 +66,6 @@ impl InputStory {
         let both_input1 = cx.new(|cx| {
             InputState::new(window, cx).placeholder("This input have prefix and suffix.")
         });
-
         let phone_input = cx.new(|cx| InputState::new(window, cx).mask_pattern("(999)-999-9999"));
         let mask_input2 = cx.new(|cx| InputState::new(window, cx).mask_pattern("AAA-###-AAA"));
         let currency_input = cx.new(|cx| {
@@ -91,20 +77,17 @@ impl InputStory {
         let custom_input = cx.new(|cx| {
             InputState::new(window, cx).placeholder("Custom Input use monospace, 0123456789.")
         });
-
         let code_input = cx.new(|cx| {
             InputState::new(window, cx)
                 .code_editor("json")
                 .multi_line(false)
                 .default_value(CODE_EXAMPLE)
         });
-
         let _subscriptions = vec![
             cx.subscribe_in(&input1, window, Self::on_input_event),
             cx.subscribe_in(&input2, window, Self::on_input_event),
             cx.subscribe_in(&phone_input, window, Self::on_input_event),
         ];
-
         Self {
             input1,
             input2,
@@ -129,7 +112,6 @@ impl InputStory {
             _subscriptions,
         }
     }
-
     fn on_input_event(
         &mut self,
         state: &Entity<InputState>,
@@ -154,14 +136,12 @@ impl InputStory {
             InputEvent::Blur => println!("Blur"),
         };
     }
-
     fn on_click_reset(&mut self, _: &ClickEvent, window: &mut Window, cx: &mut Context<Self>) {
         self.code_input.update(cx, |input_state, cx| {
             input_state.set_value(CODE_EXAMPLE, window, cx);
         });
     }
 }
-
 impl Render for InputStory {
     fn render(&mut self, window: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
         v_flex()

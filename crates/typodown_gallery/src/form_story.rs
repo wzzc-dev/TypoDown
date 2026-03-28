@@ -1,9 +1,8 @@
 use gpui::{
-    App, AppContext, Axis, Context, Entity, FocusHandle, Focusable, InteractiveElement,
-    IntoElement, ParentElement as _, Render, Styled, Window, div, prelude::FluentBuilder as _, px,
+    div, prelude::FluentBuilder as _, px, App, AppContext, Axis, Context, Entity, FocusHandle,
+    Focusable, InteractiveElement, IntoElement, ParentElement as _, Render, Styled, Window,
 };
 use gpui_component::{
-    ActiveTheme, AxisExt, IndexPath, Selectable, Sizable, Size,
     button::{Button, ButtonGroup},
     checkbox::Checkbox,
     color_picker::{ColorPicker, ColorPickerState},
@@ -14,9 +13,8 @@ use gpui_component::{
     input::{Input, InputState},
     select::{Select, SelectState},
     switch::Switch,
-    v_flex,
+    v_flex, ActiveTheme, AxisExt, IndexPath, Selectable, Sizable, Size,
 };
-
 pub struct FormStory {
     focus_handle: FocusHandle,
     name_prefix_state: Entity<SelectState<Vec<String>>>,
@@ -30,30 +28,24 @@ pub struct FormStory {
     size: Size,
     columns: usize,
 }
-
 impl super::Story for FormStory {
     fn title() -> &'static str {
         "Form"
     }
-
     fn description() -> &'static str {
         "Form to collect multiple inputs."
     }
-
     fn closable() -> bool {
         false
     }
-
     fn new_view(window: &mut Window, cx: &mut App) -> Entity<impl Render> {
         Self::view(window, cx)
     }
 }
-
 impl FormStory {
     pub fn view(window: &mut Window, cx: &mut App) -> Entity<Self> {
         cx.new(|cx| Self::new(window, cx))
     }
-
     fn new(window: &mut Window, cx: &mut Context<Self>) -> Self {
         let name_prefix_state = cx.new(|cx| {
             SelectState::new(
@@ -68,20 +60,17 @@ impl FormStory {
                 cx,
             )
         });
-
         let name_input = cx.new(|cx| InputState::new(window, cx).default_value("Jason Lee"));
         let color_state = cx.new(|cx| ColorPickerState::new(window, cx));
-
         let email_input =
             cx.new(|cx| InputState::new(window, cx).placeholder("Enter text here..."));
         let bio_input = cx.new(|cx| {
             InputState::new(window, cx)
                 .auto_grow(5, 20)
                 .placeholder("Enter text here...")
-                .default_value("Hello 世界，this is GPUI component.")
+                .default_value("Hello 世界，this is TypoDown.")
         });
         let date = cx.new(|cx| DatePickerState::new(window, cx));
-
         Self {
             focus_handle: cx.focus_handle(),
             name_prefix_state,
@@ -97,18 +86,15 @@ impl FormStory {
         }
     }
 }
-
 impl Focusable for FormStory {
     fn focus_handle(&self, _: &gpui::App) -> gpui::FocusHandle {
         self.focus_handle.clone()
     }
 }
-
 impl Render for FormStory {
     fn render(&mut self, _: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
         let is_multi_column = self.columns > 1;
         let is_horizontal = self.layout.is_horizontal();
-
         v_flex()
             .id("form-story")
             .size_full()
